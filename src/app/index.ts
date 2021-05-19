@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import P2pServer from "./p2p-server";
 import TransactionPool from "../wallet/transaction-pool";
 import Wallet from "../wallet";
+import Miner from "./miner";
 
 const HTTP_PORT: number = +(process.env.HTTP_PORT || 3001);
 
@@ -12,6 +13,7 @@ const blockchain = new Blockchain();
 const wallet = new Wallet();
 const transactionPool = new TransactionPool();
 const p2pServer = new P2pServer(blockchain, transactionPool);
+const miner = new Miner(blockchain, transactionPool, wallet, p2pServer);
 
 app.use(bodyParser.json());
 
@@ -41,6 +43,11 @@ app.post("/mine", (req, res) => {
 
   p2pServer.syncChains();
 
+  res.redirect("/blocks");
+});
+
+app.get("/mine-transactions", (req, res) => {
+  miner.mine();
   res.redirect("/blocks");
 });
 
