@@ -1,6 +1,6 @@
 import Block, { BlockDataType } from "./Block";
 
-type ChainType = Block[];
+export type ChainType = Block[];
 
 export default class Blockchain {
   public chain: ChainType;

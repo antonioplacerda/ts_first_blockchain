@@ -11,7 +11,7 @@ const app = express();
 const blockchain = new Blockchain();
 const wallet = new Wallet();
 const transactionPool = new TransactionPool();
-const p2pServer = new P2pServer(blockchain);
+const p2pServer = new P2pServer(blockchain, transactionPool);
 
 app.use(bodyParser.json());
 
@@ -26,7 +26,8 @@ app.get("/transactions", (req, res) => {
 app.post("/transact", (req, res) => {
   const { recipient, amount } = req.body;
   try {
-    wallet.createTransaction(recipient, amount, transactionPool);
+    const transaction = wallet.createTransaction(recipient, amount, transactionPool);
+    p2pServer.broadcastTransaction(transaction);
   } catch (e) {
     res.statusCode = 401;
     res.send({ error: e.message });
