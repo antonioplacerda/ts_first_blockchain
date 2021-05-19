@@ -7,8 +7,9 @@ const P2P_PORT = +(process.env.P2P_PORT || 5001);
 const peers = process.env.PEERS ? process.env.PEERS.split(",") : [];
 
 enum MESSAGE_TYPES {
-  chain = "CHAIN",
-  transaction = "TRANSACTION",
+  chain,
+  transaction,
+  clearTransactions
 }
 
 interface MessageChainType {
@@ -21,7 +22,11 @@ interface MessageTransactionType {
   transaction: Transaction
 }
 
-type MessageType = MessageChainType | MessageTransactionType;
+interface MessageClearTransactionsType {
+  type: MESSAGE_TYPES.clearTransactions,
+}
+
+type MessageType = MessageChainType | MessageTransactionType | MessageClearTransactionsType;
 
 export default class P2pServer {
   public sockets: WebSocket[] = [];
@@ -66,6 +71,8 @@ export default class P2pServer {
         }
       } else if (data.type === MESSAGE_TYPES.transaction) {
         this.transactionPool.updateOrAddTransaction(data.transaction);
+      } else if (data.type === MESSAGE_TYPES.clearTransactions) {
+        this.transactionPool.clear();
       }
 
     });
@@ -91,5 +98,9 @@ export default class P2pServer {
 
   broadcastTransaction(transaction: Transaction): void {
     this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
+  }
+  
+  broadcastClearTransactions(): void {
+    this.sockets.forEach(socket => socket.send(JSON.stringify({ type: MESSAGE_TYPES.clearTransactions })));
   }
 }
