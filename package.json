@@ -7,6 +7,7 @@
     "lint": "eslint src/**/*.ts",
     "test": "jest",
     "dev": "nodemon --config nodemon.json src/app/index.ts",
+    "dev2": "HTTP_PORT=3002 P2P_PORT=5002 PEERS=ws://localhost:5001 npm run dev",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk src/app/index.ts"
   },
   "keywords": [],
