@@ -39,6 +39,12 @@ describe("When creating a transaction pool", () => {
     expect(transactionPool.transactions.length).toEqual(2);
   });
 
+  it("should clear the transactions", () => {
+    expect(transactionPool.transactions.length).toBeGreaterThan(0);
+    transactionPool.clear();
+    expect(transactionPool.transactions).toHaveLength(0);
+  });
+
   describe("and when mixing valid and corrupt transactions", () => {
     let validTransactions: Transaction[];
 

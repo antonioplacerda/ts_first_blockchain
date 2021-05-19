@@ -64,5 +64,16 @@ describe("When creating a Transaction", () => {
         .toEqual(nextAmount);
     });
   });
+
+  describe("and creating a reward transaction", () => {
+    beforeEach(() => {
+      transaction = Transaction.rewardTransaction(wallet, Wallet.blockchainWallet());
+    });
+
+    it("should reward the miner's wallet", () => {
+      expect(transaction.outputs.find(({ address }) => address === wallet.publicKey).amount)
+        .toEqual(config.miningReward);
+    });
+  });
 });
 

@@ -26,4 +26,8 @@ export default class TransactionPool {
       )
     ));
   }
+
+  clear(): void {
+    this.transactions = [];
+  }
 }

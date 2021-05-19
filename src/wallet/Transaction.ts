@@ -1,6 +1,7 @@
 import { hash, id, verifySignature } from "../chain-util";
 import Wallet from "./index";
 import { ec } from "elliptic";
+import config from "../config.json";
 
 export type AddressType = string
 
@@ -43,20 +44,20 @@ class Transaction {
   }
 
   static newTransaction(senderWallet: Wallet, recipient: AddressType, amount: number): Transaction {
-    const transaction = new this();
-
     if (amount > senderWallet.balance) {
       throw new Error(`Amount: ${amount} exceeds balance`);
     }
 
-    transaction.outputs.push(...[
+    return Transaction.transactionWithOutputs(senderWallet, [
       { amount: senderWallet.balance - amount, address: senderWallet.publicKey },
       { amount, address: recipient },
     ]);
+  }
 
-    Transaction.signTransaction(transaction, senderWallet);
-
-    return transaction;
+  static rewardTransaction(minerWallet: Wallet, blockchainWallet: Wallet): Transaction {
+    return Transaction.transactionWithOutputs(blockchainWallet, [{
+      amount: config.miningReward, address: minerWallet.publicKey,
+    }]);
   }
 
   static signTransaction(transaction: Transaction, sender: Wallet): void {
@@ -70,6 +71,13 @@ class Transaction {
 
   static verifyTransaction(transaction: Transaction): boolean {
     return verifySignature(transaction.input.address, transaction.input.signature, hash(transaction.outputs));
+  }
+
+  static transactionWithOutputs(sender: Wallet, outputs: TransactionOutputI[]): Transaction {
+    const transaction = new this();
+    transaction.outputs.push(...outputs);
+    Transaction.signTransaction(transaction, sender);
+    return transaction;
   }
 }
 
