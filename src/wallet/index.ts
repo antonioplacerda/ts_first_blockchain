@@ -41,6 +41,12 @@ class Wallet {
 
     return transaction;
   }
+
+  static blockchainWallet(): Wallet {
+    const blockchainWallet = new this();
+    blockchainWallet.publicKey = "blockchain-wallet";
+    return blockchainWallet;
+  }
 }
 
 export default Wallet;
