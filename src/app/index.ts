@@ -3,11 +3,13 @@ import Blockchain from "../blockchain";
 import bodyParser from "body-parser";
 import P2pServer from "./p2p-server";
 import TransactionPool from "../wallet/transaction-pool";
+import Wallet from "../wallet";
 
 const HTTP_PORT: number = +(process.env.HTTP_PORT || 3001);
 
 const app = express();
 const blockchain = new Blockchain();
+const wallet = new Wallet();
 const transactionPool = new TransactionPool();
 const p2pServer = new P2pServer(blockchain);
 
@@ -19,6 +21,17 @@ app.get("/blocks", (req, res) => {
 
 app.get("/transactions", (req, res) => {
   res.json(transactionPool.transactions);
+});
+
+app.post("/transact", (req, res) => {
+  const { recipient, amount } = req.body;
+  try {
+    wallet.createTransaction(recipient, amount, transactionPool);
+  } catch (e) {
+    res.statusCode = 401;
+    res.send({ error: e.message });
+  }
+  res.redirect("/transactions");
 });
 
 app.post("/mine", (req, res) => {
