@@ -12,7 +12,7 @@ export default class Miner {
   ) {}
 
   mine(): void {
-    // get valid transactions
+    const validTransactions = this.transactionPool.validTransactions();
     // include a reward for the miner
     // create a block consisting of the valid transactions
     // sync the chains in the p2p server

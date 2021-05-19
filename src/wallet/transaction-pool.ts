@@ -17,4 +17,13 @@ export default class TransactionPool {
   existingTransaction(address: AddressType): Transaction | undefined {
     return this.transactions.find(t => t.input.address === address);
   }
+
+  validTransactions(): Transaction[] {
+    return this.transactions.filter(transaction => (
+      Transaction.verifyTransaction(transaction) &&
+      transaction.input.amount === transaction.outputs.reduce(
+        (total, { amount }) => total + amount, 0,
+      )
+    ));
+  }
 }
