@@ -1,8 +1,9 @@
 import config from "../config.json";
 import { hash } from "../chain-util";
+import Transaction from "../wallet/Transaction";
 
 export type HashType = string;
-export type BlockDataType = string;
+export type BlockDataType = Transaction[];
 
 export default class Block {
   private static genesisBlock: Block
@@ -42,7 +43,7 @@ export default class Block {
 
   static get genesis(): Block {
     if (!Block.genesisBlock) {
-      Block.genesisBlock = new Block(0, "----", "f1r57-h45h", "", 0);
+      Block.genesisBlock = new Block(0, "----", "f1r57-h45h", [], 0);
     }
     return Block.genesisBlock;
   }
