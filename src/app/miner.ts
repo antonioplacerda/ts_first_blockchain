@@ -2,6 +2,8 @@ import Blockchain from "../blockchain";
 import TransactionPool from "../wallet/transaction-pool";
 import Wallet from "../wallet";
 import P2pServer from "./p2p-server";
+import Transaction from "../wallet/Transaction";
+import Block from "../blockchain/Block";
 
 export default class Miner {
   constructor(
@@ -11,12 +13,17 @@ export default class Miner {
     public p2pServer: P2pServer,
   ) {}
 
-  mine(): void {
+  mine(): Block {
     const validTransactions = this.transactionPool.validTransactions();
-    // include a reward for the miner
-    // create a block consisting of the valid transactions
-    // sync the chains in the p2p server
-    // clear the transaction pool
-    // broadcast to every miner to clear their transaction pools
+    if (validTransactions.length === 0 ) {
+      return;
+    }
+    validTransactions.push(Transaction.rewardTransaction(this.wallet, Wallet.blockchainWallet()));
+    const block = this.blockchain.addBlock(validTransactions);
+    this.p2pServer.syncChains();
+    this.transactionPool.clear();
+    this.p2pServer.broadcastClearTransactions();
+
+    return block;
   }
 }
