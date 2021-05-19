@@ -1,5 +1,6 @@
 import Wallet from "./index";
 import Transaction, { AddressType } from "./Transaction";
+import config from "../config.json";
 
 describe("When creating a Transaction", () => {
   let transaction: Transaction;
@@ -9,7 +10,7 @@ describe("When creating a Transaction", () => {
 
   beforeEach(() => {
     wallet = new Wallet();
-    amount = 50;
+    amount = config.initialBalance / 100;
     recipient = "r3c1p13nt";
     transaction = Transaction.newTransaction(wallet, recipient, amount);
   });
@@ -33,13 +34,13 @@ describe("When creating a Transaction", () => {
   });
 
   it("should invalidate a corrupt transaction", () => {
-    transaction.outputs[0].amount = 500000;
+    transaction.outputs[0].amount = config.initialBalance * 10000000;
     expect(Transaction.verifyTransaction(transaction)).toBe(false);
   });
 
   describe("when transacting with an amount that exceeds the balance", () => {
     it("should throw an error", () => {
-      expect(() => Transaction.newTransaction(wallet, recipient, 50000000000)).toThrowError();
+      expect(() => Transaction.newTransaction(wallet, recipient, config.initialBalance * 10000000)).toThrowError();
     });
   });
 
@@ -48,7 +49,7 @@ describe("When creating a Transaction", () => {
     let nextRecipient: AddressType;
 
     beforeEach(() => {
-      nextAmount = 20;
+      nextAmount = config.initialBalance / 50;
       nextRecipient = "n3xt-r3c1p13nt";
       transaction = transaction.update(wallet, nextRecipient, nextAmount);
     });

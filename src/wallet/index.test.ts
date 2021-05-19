@@ -1,6 +1,7 @@
 import Wallet from "./index";
 import TransactionPool from "./transaction-pool";
 import Transaction, { AddressType } from "./Transaction";
+import config from "../config.json";
 
 describe("When creating a wallet", () => {
   let wallet: Wallet;
@@ -17,7 +18,7 @@ describe("When creating a wallet", () => {
     let recipient: AddressType;
 
     beforeEach(() => {
-      sendAmount = 50;
+      sendAmount = config.initialBalance / 20;
       recipient = "r4nd0m-4ddr355";
       transaction = wallet.createTransaction(recipient, sendAmount, transactionPool);
     });

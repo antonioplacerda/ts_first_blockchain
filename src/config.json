@@ -1,5 +1,6 @@
 {
   "difficulty": 4,
   "mineRate": 3000,
-  "initialBalance": 500
+  "initialBalance": 5,
+  "miningReward": 1
 }
