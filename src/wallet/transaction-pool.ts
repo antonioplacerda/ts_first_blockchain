@@ -1,4 +1,4 @@
-import Transaction from "./Transaction";
+import Transaction, { AddressType } from "./Transaction";
 
 export default class TransactionPool {
   constructor(
@@ -12,5 +12,9 @@ export default class TransactionPool {
     } else {
       this.transactions.push(transaction);
     }
+  }
+
+  existingTransaction(address: AddressType): Transaction | undefined {
+    return this.transactions.find(t => t.input.address === address);
   }
 }
